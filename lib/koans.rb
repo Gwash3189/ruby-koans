@@ -1,0 +1,2 @@
+module Koans
+end
