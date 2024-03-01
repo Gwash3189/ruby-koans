@@ -6,7 +6,10 @@ module Koans
   class Row < T::Struct
     extend T::Sig
 
-    const :type, String
-    prop :value, String
+    const :sex, String
+    const :weight_sep, Integer
+    const :weight_apr, Integer
+    const :bmi_sep, Integer
+    const :bmi_apr, Integer
   end
 end

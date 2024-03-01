@@ -3,7 +3,7 @@
 require 'sorbet-runtime'
 require_relative './row'
 
-module Koan
+module Koans
   class CSV < T::Struct
     extend T::Sig
 
@@ -11,6 +11,7 @@ module Koan
     prop :headers, Hash, default: {}
     prop :lookup_index, Hash, default: {}
     prop :rows, Array, default: []
+    const :students, Array, default: []
 
     def self.run(path:)
       new(path:).run
@@ -20,14 +21,19 @@ module Koan
       read_file do |line, index|
         parse_header(line:) if index.zero?
         unless index.zero?
-          row_type = lookup_index[index]
-          row_value = headers[row_type]
+          line_data = line.gsub('"', '').split(', ')
+          hash = {}
 
-          puts(row_type)
+          line_data.each_with_index do |data, index|
+            row_type = lookup_index[index]
+            clean_row_type = row_type.gsub('(', '').gsub(')', '').gsub(' ', '_')
+            hash[clean_row_type] = data
+          end
+
+          students.push(Koans::Row.new(*hash))
+          puts(hash)
         end
       end
-
-      lookup_index
     end
 
     private
@@ -39,23 +45,17 @@ module Koan
 
     sig { params(line: String).void }
     def parse_header(line:)
-      i = 0
-
-      line.gsub('"', '').split(', ').each do |header|
+      line.gsub('"', '').split(', ').each_with_index do |header, index|
         key = header.downcase
         headers[key] = []
-        lookup_index[i] = key
-        i = i + 1
+        lookup_index[index] = key
       end
     end
 
     sig { params(block: T.proc.params(line: String, index: Integer).void).void }
     def read_file(&block)
-      index = 0
-
-      File.readlines(path, chomp: true).each do |line|
+      File.readlines(path, chomp: true).each_with_index do |line, index|
         block.call(line, index)
-        index += 1
       end
     end
   end
