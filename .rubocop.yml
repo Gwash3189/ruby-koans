@@ -10,4 +10,27 @@
 # See https://docs.rubocop.org/rubocop/configuration
 
 AllCops:
-  TargetRubyVersion: 3.2.2
+  TargetRubyVersion: 3.2
+  NewCops: enable
+  SuggestExtensions: false
+Bundler:
+  Enabled: false
+Gemspec:
+  Enabled: false
+Layout:
+  Enabled: false
+Lint:
+  Enabled: true
+Metrics:
+  Enabled: false
+Naming:
+  Enabled: false
+Style:
+  Enabled: true
+Security:
+  Enabled: true
+
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - "spec/**/*_spec.rb"
+    - "*/spec/**/*_spec.rb"
